@@ -29,8 +29,5 @@ sub depunct($) {
     $line =~s/\s$//g;
     return $line;
 }   
-sub prob(%hash, $string, $freq){
-   return ($hash{$str}/$freq);
-}
  
 1;

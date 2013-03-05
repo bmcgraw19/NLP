@@ -1,0 +1,111 @@
+#! /usr/bin/perl
+use Switch; 
+
+require 'common_functions.pl';
+
+open(EN, "<HW2-english.txt");
+open(FR, "<HW2-french.txt");
+open(GR, "<HW2-german.txt");
+open(IN, "<LangID.test.txt");
+#open(IN, "<test.txt");
+open(OUT, ">BigramWordLangId-AO.out");
+
+my %bi_eng;
+my $co_eng = 0;
+
+my %bi_fre;
+my $co_fre = 0;
+
+my %bi_ger;
+my $co_ger = 0;
+
+
+our @lines = (<EN>);
+foreach $line (@lines){ #each line
+    $line = depunct($line); #removes punctuation
+    my (@words) = split /\s+/, $line; #split the line into words
+    while( my ($index, $word) = each @words){
+	if( $index != (@words - 2)){
+	    $bi_eng{$words[$index] ." ". $words[$index+1]} ++;
+	    $co_eng ++;
+	}
+    }
+}
+#does the same, but for the french corpus
+foreach $line (<FR>){
+    $line = depunct($line);
+    my (@words) = split /\s+/, $line;
+    while(my($index, $word) = each @words){
+	if ($index != (@words-2)){
+	    $bi_fre{$words[$index] ." ". $words[$index+1]} ++;
+	    $co_fre ++;
+	}
+    }
+}
+
+foreach $line (<GR>){
+    $line = depunct($line);
+    my (@words) = split /\s+/, $line;
+    while(my($index, $word) = each @words){
+	if( $index != (@words-2)){
+	    $bi_ger{$words[$index] . " " . $words[$index+1]} ++;
+	    $co_ger ++;
+	}
+    }
+}
+#foreach my $i (sort {($bi_eng{$b} <=> $bi_eng{$a}) || ($a cmp $b )} keys %bi_eng){
+ #   print OUT $i . ":   " . $bi_eng{$i}. "\n";
+#}
+
+
+#foreach my $i (sort {($letter_ger{$b} <=> $letter_ger{$a})*0 || ($a cmp $b)} keys %letter_ger){
+#}
+
+ print OUT "ID LANG\n";
+@lines = (<IN>);
+while ( my ($index, $line) = each @lines){ 
+#    print OUT $index+1 . ". ";   #prints the line number
+    chomp($line);   
+    $line = depunct($line);
+    if($line =~ m/\w/){
+	my $lang = 0;
+    
+	my $eng_prob = 0; #total probability of the sentence
+	my $fre_prob = 0;
+	my $ger_prob = 0;
+	
+	my $ew_prob = 0; #probability of the word
+	my $fw_prob = 0;
+	my $gw_prob = 0;
+	
+	#splits into words
+	my (@words) = split /\s+/, $line;
+	foreach my $word (@words){
+	    
+	    
+	}
+	#Computes which is the largest
+	if($eng_prob > $fre_prob && $eng_prob > $ger_prob){
+	    $lang = 1;
+	}
+	if($fre_prob > $eng_prob && $fre_prob > $ger_prob){
+	    $lang = 2;
+	}
+	if($ger_prob > $eng_prob && $ger_prob > $fre_prob){
+	    $lang = 3;
+	}
+	
+	switch ($lang){
+	    case 0 {print OUT "ERROR\n"}
+	    case 1 {print OUT "EN\n"}
+	    case 2 {print OUT "FR\n"}
+	    case 3 {print OUT "GR\n"}
+	} #end while (done parsing in file) 
+    }
+}
+
+close(EN);
+close(FR);
+close(GR);
+close(IN);
+	close(OUT);

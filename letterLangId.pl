@@ -294,7 +294,7 @@ while ( my ($index, $line) = each @lines){
 	}
 	
 	switch ($lang){
-	    case 0 {print OUT "ERRRRRRRRR\n"}
+	    case 0 {print OUT "ERROR\n"}
 	    case 1 {print OUT "EN\n"}
 	    case 2 {print OUT "FR\n"}
 	    case 3 {print OUT "GR\n"}
