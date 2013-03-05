@@ -166,13 +166,50 @@ print OUT "ID LANG\n";
 while ( my ($index, $line) = each @lines){ 
     print OUT $index+1 . ". ";   #prints the line number
     chomp($line);    
-    print OUT depunct($line) . "\n";
-
+    my $lang = 0;
+    
     #splits into words
-    #calculates probablility of the first letter p(c_0)
-    #splits word into bigrams
-    #calculates probablility of each bigram p(c_n | c_n-1)
-    #
+    my (@words) = split /\s+/, $line;
+    foreach my $word (@words){
+	#determines what language the word is most likely to be
+	my $eng_prob = 0;
+	my $fre_prob = 0;
+	my $ger_prob = 0;
+
+	my $len = 0;
+	#calculates probablility of the first letter p(c_0)
+	while($len < (length($word) - 1)){ 
+	    my $ngm = substr $word, $len, 2;  #splits word into bigrams
+	    
+	    #ENGLISH PROBABILITY
+	    $ew_prob = ($bigram_eng{$ngm} /$num_bi_eng) ;     # P(n | n-1) = P( n-1 n)
+	    $ew_prob /= ($letter_eng{substr $word, $len+1, 1} / $num_le_eng ); #/ P( n-1)
+	    $eng_prob += $ew_prob;
+
+	    #FRENCH PROBABILITY
+	    $fw_prob = ($bigram_fre{$ngm} / $num_bi_fre);
+	    $fw_prob /= ($letter_fre{substr $word, $len+1, 1} / $num_le_fre);
+	    $fre_prob += $fw_prob;
+	    
+	    #GERMAN PROBABLILITY
+	    $gw_prob = ($bigram_ger{$ngm}/$num_bi_ger);
+	    $gw_prob /= ($letter_ger{substr $word, $len+1, 1} / $num_le_ger);
+	    $ger_prob += $gw_prob;
+	    $len++;
+	}
+    }
+	#Computes which is the largest
+	if( $eng_prob >= $fre_prob){
+	    if($eng_prob >= $ger_prob){
+		$lang = 1;
+	    }
+	}
+    }
+    switch ($lang){
+	case 0 {print OUT "ERR\n"}
+	case 1 {print OUT "ENG\n"}
+	case 2 {print OUT "FRE\n"}
+	case 3 {print OUT "GER\n"}
 }
 
 close(EN);
